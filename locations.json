@@ -1,0 +1,65 @@
+[
+  {
+    "id": 1,
+    "name": "test",
+    "source": "test",
+    "destination": "test",
+    "schedule": "Never"
+  },
+  {
+    "id": 2,
+    "name": "test",
+    "source": "test",
+    "destination": "test",
+    "schedule": "Never"
+  },
+  {
+    "id": 3,
+    "name": "test",
+    "source": "test",
+    "destination": "test",
+    "schedule": "Never"
+  },
+  {
+    "id": 4,
+    "name": "test",
+    "source": "test",
+    "destination": "test",
+    "schedule": "Never"
+  },
+  {
+    "id": 5,
+    "name": "test",
+    "source": "test",
+    "destination": "test",
+    "schedule": "Weekly"
+  },
+  {
+    "id": 6,
+    "name": "test",
+    "source": "test",
+    "destination": "test",
+    "schedule": "Every Two Weeks"
+  },
+  {
+    "id": 7,
+    "name": "test",
+    "source": "test",
+    "destination": "test",
+    "schedule": "Never"
+  },
+  {
+    "id": 8,
+    "name": "test",
+    "source": "test",
+    "destination": "test",
+    "schedule": "Never"
+  },
+  {
+    "id": 9,
+    "name": "test edit",
+    "source": "test 1",
+    "destination": "test 2",
+    "schedule": "Every Two Weeks"
+  }
+]
