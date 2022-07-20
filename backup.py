@@ -1,4 +1,5 @@
 from ast import Return
+from cgitb import text
 from imp import source_from_cache
 from tkinter import *
 from tkinter.ttk import *
@@ -20,7 +21,7 @@ def populateTree():
         testDict = data
 
     for d in data:
-        tree.insert('', END, values=(d['id'], d['name'], d['source'], d['destination'], d['schedule']))
+        tree.insert('', END, values=(d['id'], d['name'], d['source'], d['destination'], d['schedule'], d['lastbackup'], d['nextbackup'], d['status']))
         location_count +=1
         print(location_count)
 # Clear data from the Tree View Widget
@@ -48,9 +49,13 @@ def openAddSourceWindow():
     lblDestination = Label(addSourceWindow, text="Destination:")
     txtDestination = Entry(addSourceWindow)
     lblSchedule = Label(addSourceWindow, text="Schedule:")
-    cmbSchedule = Combobox(addSourceWindow)
+    cmbSelected = StringVar()
+    cmbSchedule = Combobox(addSourceWindow, textvariable=cmbSelected)
     cmbSchedule['values'] = ("Never", "Weekly", "Every Two Weeks")
     cmbSchedule.current(0)
+    
+    btnEditSchedule = Button(addSourceWindow, text="Change Schedule", state=DISABLED, command=openEditScheduleWindow)
+    
     btnCancel = Button(addSourceWindow, text="Cancel", command=addSourceWindow.destroy)
     btnSubmit = Button(addSourceWindow, text="Okay", command=lambda: addSource(txtName.get(), txtSource.get(), txtDestination.get(), cmbSchedule.get(), addSourceWindow))
 
@@ -62,10 +67,15 @@ def openAddSourceWindow():
     txtDestination.grid(column=1, row=2, padx=10, pady=10)
     lblSchedule.grid(column=0, row=3, padx=50, pady=10)
     cmbSchedule.grid(column=1, row=3, padx=10, pady=10)
-    btnCancel.grid(column=0, row=4)
-    btnSubmit.grid(column=1, row=4)
+    cmbSchedule.bind('<<ComboboxSelected>>', switchState)
+    btnEditSchedule.grid(column=1, row=4, padx=50, pady=10)
+    btnCancel.grid(column=0, row=5)
+    btnSubmit.grid(column=1, row=5)
 
     return addSourceWindow
+def switchState(event):
+    print("switchState was run")
+
 # Add Source Logic
 def addSource(name, source, destination, schedule, window):
     global location_count
@@ -83,7 +93,10 @@ def addSource(name, source, destination, schedule, window):
                 "name" : name,
                 "source" : source,
                 "destination" : destination,
-                "schedule" : schedule
+                "schedule" : schedule,
+                "lastbackup" : "Never",
+                "nextbackup" : "test",
+                "status" : "status"
         }
         # Open and  read from JSON file
         with open("locations.json", "r+") as file:
@@ -102,6 +115,15 @@ def addSource(name, source, destination, schedule, window):
         location_count = 0
         # Populate the Tree View
         populateTree()
+def openEditScheduleWindow():
+    editScheduleWindow = Toplevel(root)
+
+    # sets the title of the
+    # Toplevel widget
+    editScheduleWindow.title("Add Source...")
+
+    # sets the geometry of toplevel
+    editScheduleWindow.geometry("400x300")
 ####### Edit Source Window #######
 def openEditSourceWindow():
     # Toplevel object which will
@@ -176,7 +198,10 @@ def editSource(id, name, source, destination, schedule, window):
                 "name" : name,
                 "source" : source,
                 "destination" : destination,
-                "schedule" : schedule
+                "schedule" : schedule,
+                "lastbackup" : "test",
+                "nextbackup" : "test",
+                "status" : "status"
         }
 
         print(data)
@@ -254,7 +279,7 @@ def backupAll():
     messagebox.showwarning("Remove Source...", "Are you sure you want to remove this backup location?")
 ####### The Main Window #######
 # Define Tree View Coumns
-columns = ('id', 'name', 'source', 'destination', 'last_backup', 'next_backup', 'status')
+columns = ('id', 'name', 'source', 'destination', 'schedule', 'last_backup', 'next_backup', 'status')
 # Define Title Label
 lblTitle = Label(root, text="Backup.py", font=("Arial", 25))
 # Define Tree View Frame
@@ -266,6 +291,7 @@ tree.heading('id', text="ID")
 tree.heading('name', text="Name")
 tree.heading('source', text="Source")
 tree.heading('destination', text="Destination")
+tree.heading('schedule', text="Schedule")
 tree.heading('last_backup', text="Last Backup")
 tree.heading('next_backup', text="Next Backup")
 tree.heading('status', text="Status")
