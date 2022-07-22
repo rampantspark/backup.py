@@ -52,7 +52,7 @@ def openAddSourceWindow():
     cmbSelected = StringVar()
     cmbSchedule = Combobox(addSourceWindow, textvariable=cmbSelected)
     cmbSchedule['values'] = ("Never", "Weekly", "Every Two Weeks")
-    cmbSchedule.current(0)
+   
     
     btnEditSchedule = Button(addSourceWindow, text="Change Schedule", state=DISABLED, command=openEditScheduleWindow)
     
@@ -68,6 +68,7 @@ def openAddSourceWindow():
     lblSchedule.grid(column=0, row=3, padx=50, pady=10)
     cmbSchedule.grid(column=1, row=3, padx=10, pady=10)
     cmbSchedule.bind('<<ComboboxSelected>>', switchState)
+    cmbSchedule.current(0)
     btnEditSchedule.grid(column=1, row=4, padx=50, pady=10)
     btnCancel.grid(column=0, row=5)
     btnSubmit.grid(column=1, row=5)
