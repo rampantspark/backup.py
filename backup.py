@@ -7,6 +7,10 @@ from tkinter import messagebox
 import json
 # Counter for JSON locations
 location_count = 0
+btnEditSchedule = None
+btnEditScheduleEdit = None
+cmbSelected = None
+cmbSelectedEdit = None
 # Init Root Window
 root = Tk()
 # Set Root Window Title
@@ -34,14 +38,13 @@ def openAddSourceWindow():
     # Toplevel object which will
     # be treated as a new window
     addSourceWindow = Toplevel(root)
-
     # sets the title of the
     # Toplevel widget
     addSourceWindow.title("Add Source...")
-
     # sets the geometry of toplevel
-    addSourceWindow.geometry("400x300")
-
+    addSourceWindow.geometry("400x300") 
+    global btnEditSchedule
+    global cmbSelected
     lblName = Label(addSourceWindow, text="Name:")
     txtName = Entry(addSourceWindow)
     lblSource = Label(addSourceWindow, text="Source:")
@@ -50,15 +53,13 @@ def openAddSourceWindow():
     txtDestination = Entry(addSourceWindow)
     lblSchedule = Label(addSourceWindow, text="Schedule:")
     cmbSelected = StringVar()
-    cmbSchedule = Combobox(addSourceWindow, textvariable=cmbSelected)
+    cmbSchedule = Combobox(addSourceWindow, textvariable= cmbSelected)
+    
+    cmbSelected.trace('w', switchStateAdd)
     cmbSchedule['values'] = ("Never", "Weekly", "Every Two Weeks")
-   
-    
     btnEditSchedule = Button(addSourceWindow, text="Change Schedule", state=DISABLED, command=openEditScheduleWindow)
-    
     btnCancel = Button(addSourceWindow, text="Cancel", command=addSourceWindow.destroy)
     btnSubmit = Button(addSourceWindow, text="Okay", command=lambda: addSource(txtName.get(), txtSource.get(), txtDestination.get(), cmbSchedule.get(), addSourceWindow))
-
     lblName.grid(column=0, row=0, padx=50, pady=10)
     txtName.grid(column=1, row=0, padx=10, pady=10)
     lblSource.grid(column=0, row=1, padx=50, pady=10)
@@ -67,16 +68,21 @@ def openAddSourceWindow():
     txtDestination.grid(column=1, row=2, padx=10, pady=10)
     lblSchedule.grid(column=0, row=3, padx=50, pady=10)
     cmbSchedule.grid(column=1, row=3, padx=10, pady=10)
-    cmbSchedule.bind('<<ComboboxSelected>>', switchState)
-    cmbSchedule.current(0)
+    #cmbSchedule.bind('<<ComboboxSelected>>', switchStateAdd)
+    #cmbSchedule.current(0)
     btnEditSchedule.grid(column=1, row=4, padx=50, pady=10)
     btnCancel.grid(column=0, row=5)
     btnSubmit.grid(column=1, row=5)
-
+ 
     return addSourceWindow
-def switchState(event):
-    print("switchState was run")
+def switchStateAdd(*arg):
+    if cmbSelected.get() == "Never":
+        btnEditSchedule["state"] = "disabled"
+    else:
+        btnEditSchedule["state"] = "normal"
 
+    print("switchStateAdd was run")
+ 
 # Add Source Logic
 def addSource(name, source, destination, schedule, window):
     global location_count
@@ -127,20 +133,16 @@ def openEditScheduleWindow():
     editScheduleWindow.geometry("400x300")
 ####### Edit Source Window #######
 def openEditSourceWindow():
-    # Toplevel object which will
-    # be treated as a new window
     editSourceWindow = Toplevel(root)
-    # sets the title of the
-    # Toplevel widget
-    editSourceWindow.title("Add Source...")
-    # sets the geometry of toplevel
+    editSourceWindow.title("Edit Source...")
     editSourceWindow.geometry("400x300")
+    global btnEditScheduleEdit
+    global cmbSelectedEdit
     # Get the currently selected tree view item
+    ###### ADD ERROR HANDLING HERE WITH IF STATEMENT
     selected_item = tree.selection()[0]
     temp = tree.item(selected_item)
     # Update values
-        
-
     id = temp['values'][0]
     name = temp['values'][1]
     source = temp['values'][2]
@@ -156,9 +158,12 @@ def openEditSourceWindow():
     elif schedule == "Every Two Weeks":
         current=2
     else:
-        #throw and exception
+        #throw an exception
         current=3
-
+        
+    cmbSelectedEdit = StringVar()
+    cmbSelectedEditRead = StringVar()
+    
     lblName = Label(editSourceWindow, text="Name:")
     txtName = Entry(editSourceWindow)
     txtName.insert(0, name)
@@ -169,12 +174,16 @@ def openEditSourceWindow():
     txtDestination = Entry(editSourceWindow)
     txtDestination.insert(2, destination)
     lblSchedule = Label(editSourceWindow, text="Schedule:")
-    cmbSchedule = Combobox(editSourceWindow)
+    cmbSchedule = Combobox(editSourceWindow, textvariable= cmbSelectedEdit)
+    
+    cmbSelectedEdit.trace('r', switchStateEdit)
     cmbSchedule['values'] = ("Never", "Weekly", "Every Two Weeks")
     cmbSchedule.current(current)
     btnCancel = Button(editSourceWindow, text="Cancel", command=editSourceWindow.destroy)
     btnSubmit = Button(editSourceWindow, text="Add", command=lambda: editSource(id, txtName.get(), txtSource.get(), txtDestination.get(), cmbSchedule.get(), editSourceWindow))
 
+    btnEditScheduleEdit = Button(editSourceWindow, text="Change Schedule", state=DISABLED, command=openEditScheduleWindow)
+    readStateEdit()
     lblName.grid(column=0, row=0, padx=50, pady=10)
     txtName.grid(column=1, row=0, padx=10, pady=10)
     lblSource.grid(column=0, row=1, padx=50, pady=10)
@@ -183,8 +192,26 @@ def openEditSourceWindow():
     txtDestination.grid(column=1, row=2, padx=10, pady=10)
     lblSchedule.grid(column=0, row=3, padx=50, pady=10)
     cmbSchedule.grid(column=1, row=3, padx=10, pady=10)
-    btnCancel.grid(column=0, row=4)
-    btnSubmit.grid(column=1, row=4)
+    #cmbSchedule.bind('<<ComboboxSelected>>', switchStateEdit)
+    
+    btnEditScheduleEdit.grid(column=1, row=4, padx=50, pady=10)
+    
+    btnCancel.grid(column=0, row=5)
+    btnSubmit.grid(column=1, row=5)
+    
+    #return editSourceWindow
+def readStateEdit():
+    if cmbSelectedEdit.get() == "Never":
+        btnEditScheduleEdit["state"] = "disabled"
+    else:
+        btnEditScheduleEdit["state"] = "normal"
+def switchStateEdit(*arg):
+    if cmbSelectedEdit.get() == "Never":
+        btnEditScheduleEdit["state"] = "disabled"
+    else:
+        btnEditScheduleEdit["state"] = "normal"
+        
+    print("switchStateEdit was run")    
 # Edit Source Logic
 def editSource(id, name, source, destination, schedule, window):
     print(name + source + destination)
