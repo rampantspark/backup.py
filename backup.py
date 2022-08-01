@@ -26,7 +26,7 @@ class MainApplication(Tk):
         # MAIN WINDOW GUI
         columns = ('id', 'name', 'source', 'destination', 'schedule', 'last_backup', 'next_backup', 'status')
         # Define Title Label
-        lblTitle = Label(self, text="Backup.py", font=("Arial", 25))
+        lblTitle = Label(self, text="backup.py", font=("Arial", 25))
         # Define Tree View Frame
         frame = Frame(self)
         # Define Tree View
@@ -55,24 +55,24 @@ class MainApplication(Tk):
         btnAdd = Button(self, text="Add Source...", command=self.openAddSourceWindow)
         btnEdit = Button(self, text="Edit Source...", command=self.openEditSourceWindow)
         btnDelete = Button(self, text="Remove Source...", command=self.removeSource)
-        btnBackup = Button(self, text="Backup...")
+        btnBackup = Button(self, text="Backup Selected...")
         btnBackupNow = Button(self, text="Backup All")
         # Push Title to Grid
         lblTitle.grid(column=0, row=0, columnspan=5, padx=0, pady=30)
         # Push the Frame, Tree View, and Scrollbar to Grid
-        frame.grid(column=0, row=1, columnspan=5, padx=20, pady=20)
+        frame.grid(column=0, row=1, columnspan=5, padx=30, pady=20)
         tree.grid(column=0, row=1, columnspan=5, padx=0, pady=0, sticky='nsew')
-        scrlTree.grid(column=5, row=1, padx=0, sticky="ns")
+        scrlTree.grid(column=6, row=1, padx=0, sticky="ns")
         # Populate the Tree with JSON location data
-        self.populate_tree(self)
+        self.populate_tree()
         # Push Main Functionality Buttons to Grid
         btnAdd.grid(column=0, row=4, padx=5, pady=20)
         btnEdit.grid(column=1, row=4, padx=5, pady=20)
         btnDelete.grid(column=2, row=4, padx=5, pady=20)
         btnBackup.grid(column=3, row=4, padx=5, pady=20)
-        btnBackupNow.grid(column=4, row=4, padx=5, pady=20)
+        btnBackupNow.grid(column=4, row=4, padx=5, pady=10)
 
-    def populate_tree(event, self):
+    def populate_tree(event):
         global tree
         global location_count
         #Read from json file and populate treelist
@@ -180,17 +180,18 @@ class MainApplication(Tk):
             # Reset location count
             location_count = 0
             # Populate the Tree View
-            self.opulateTree()
+            self.populate_tree()
 
     def openEditScheduleWindow(self):
         editScheduleWindow = Toplevel(self)
 
         # sets the title of the
         # Toplevel widget
-        editScheduleWindow.title("Add Source...")
+        editScheduleWindow.title("Edit Schedule...")
 
         # sets the geometry of toplevel
         editScheduleWindow.geometry("400x300")
+        
     ####### Edit Source Window #######
     def openEditSourceWindow(self):
         editSourceWindow = Toplevel(self)
@@ -242,7 +243,7 @@ class MainApplication(Tk):
         cmbSchedule['values'] = ("Never", "Weekly", "Every Two Weeks")
         cmbSchedule.current(current)
         btnCancel = Button(editSourceWindow, text="Cancel", command=editSourceWindow.destroy)
-        btnSubmit = Button(editSourceWindow, text="Add", command=lambda: self.editSource(id, txtName.get(), txtSource.get(), txtDestination.get(), cmbSchedule.get(), editSourceWindow))
+        btnSubmit = Button(editSourceWindow, text="Save", command=lambda: self.editSource(id, txtName.get(), txtSource.get(), txtDestination.get(), cmbSchedule.get(), editSourceWindow))
 
         btnEditScheduleEdit = Button(editSourceWindow, text="Change Schedule", state=DISABLED, command=self.openEditScheduleWindow)
         self.readStateEdit(self)
@@ -255,14 +256,12 @@ class MainApplication(Tk):
         lblSchedule.grid(column=0, row=3, padx=50, pady=10)
         cmbSchedule.grid(column=1, row=3, padx=10, pady=10)
         cmbSchedule.bind('<<ComboboxSelected>>', self.switchStateEdit)
-
         btnEditScheduleEdit.grid(column=1, row=4, padx=50, pady=10)
 
         btnCancel.grid(column=0, row=5)
         btnSubmit.grid(column=1, row=5)
-
-        #return editSourceWindow
-    def readStateEdit(event, self):
+        
+    def readStateEdit(event):
         global cmbSchedule
         global btnEditScheduleEdit
         print("event")
@@ -271,8 +270,11 @@ class MainApplication(Tk):
            btnEditScheduleEdit["state"] = "disabled"
         else:
             btnEditScheduleEdit["state"] = "normal"
+            
     def switchStateEdit(event):
-        if cmbSelectedEdit.get() == "Never":
+        global cmbSchedule
+        global btnEditScheduleEdit
+        if cmbSchedule.get() == "Never":
             btnEditScheduleEdit["state"] = "disabled"
         else:
             btnEditScheduleEdit["state"] = "normal"
@@ -323,7 +325,7 @@ class MainApplication(Tk):
             #clear the treeview
             self.clearTree()
             #populate the treeview
-            self.populateTree()
+            self.populate_tree()
     # Remove Source Logic
     def removeSource(self):
         global location_count
@@ -360,7 +362,7 @@ class MainApplication(Tk):
 
             location_count = 0
 
-            self.populateTree(self)
+            self.populate_tree(self)
         else:
             reply = "cancel"
     # Individual Backup Logic
