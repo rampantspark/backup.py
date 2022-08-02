@@ -10,7 +10,8 @@ btnEditSchedule = None
 btnEditScheduleEdit = None
 cmbSelected = None
 cmbSelectedEdit = None
-cmbSchedule = None
+cmbChangeSchedule = None
+cmbTime = None
 
 class MainApplication(Tk):
 
@@ -115,7 +116,7 @@ class MainApplication(Tk):
 
         cmbSelected.trace('w', self.switchStateAdd)
         cmbSchedule['values'] = ("Never", "Weekly", "Every Two Weeks")
-        btnEditSchedule = Button(addSourceWindow, text="Change Schedule", state=DISABLED, command=self.openEditScheduleWindow)
+        
         btnCancel = Button(addSourceWindow, text="Cancel", command=addSourceWindow.destroy)
         btnSubmit = Button(addSourceWindow, text="Okay", command=lambda: self.addSource(txtName.get(), txtSource.get(), txtDestination.get(), cmbSchedule.get(), addSourceWindow))
         lblName.grid(column=0, row=0, padx=50, pady=10)
@@ -128,7 +129,6 @@ class MainApplication(Tk):
         cmbSchedule.grid(column=1, row=3, padx=10, pady=10)
         #cmbSchedule.bind('<<ComboboxSelected>>', switchStateAdd)
         #cmbSchedule.current(0)
-        btnEditSchedule.grid(column=1, row=4, padx=50, pady=10)
         btnCancel.grid(column=0, row=5)
         btnSubmit.grid(column=1, row=5)
 
@@ -181,26 +181,18 @@ class MainApplication(Tk):
             location_count = 0
             # Populate the Tree View
             self.populate_tree()
-
-    def openEditScheduleWindow(self):
-        editScheduleWindow = Toplevel(self)
-
-        # sets the title of the
-        # Toplevel widget
-        editScheduleWindow.title("Edit Schedule...")
-
-        # sets the geometry of toplevel
-        editScheduleWindow.geometry("400x300")
-        
+       
     ####### Edit Source Window #######
     def openEditSourceWindow(self):
         editSourceWindow = Toplevel(self)
         editSourceWindow.title("Edit Source...")
-        editSourceWindow.geometry("400x300")
+        editSourceWindow.geometry("400x400")
         editSourceWindow.resizable(False, False)
         global btnEditScheduleEdit
         global cmbSelectedEdit
         global cmbSchedule
+        global cmbChangeSchedule
+        global cmbTime
         # Get the currently selected tree view item
         ###### ADD ERROR HANDLING HERE WITH IF STATEMENT
         selected_item = tree.selection()[0]
@@ -238,15 +230,25 @@ class MainApplication(Tk):
         txtDestination.insert(2, destination)
         lblSchedule = Label(editSourceWindow, text="Schedule:")
         cmbSchedule = Combobox(editSourceWindow)
-
-        #cmbSelectedEdit.trace('r', self.switchStateEdit)
         cmbSchedule['values'] = ("Never", "Weekly", "Every Two Weeks")
         cmbSchedule.current(current)
+        lblWeeks = Label(editSourceWindow, text="Day:")
+        lblTime = Label(editSourceWindow, text="Time:")
+        cmbChangeSchedule = Combobox(editSourceWindow)
+        cmbChangeSchedule['values'] = ("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
+        cmbChangeSchedule.current(0)
+        
+        spinvar = StringVar()
+        
+        cmbTime = Combobox(editSourceWindow)
+        cmbTime['values'] = ('00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00')
+        cmbTime.current(0)
+        
         btnCancel = Button(editSourceWindow, text="Cancel", command=editSourceWindow.destroy)
         btnSubmit = Button(editSourceWindow, text="Save", command=lambda: self.editSource(id, txtName.get(), txtSource.get(), txtDestination.get(), cmbSchedule.get(), editSourceWindow))
 
-        btnEditScheduleEdit = Button(editSourceWindow, text="Change Schedule", state=DISABLED, command=self.openEditScheduleWindow)
-        self.readStateEdit(self)
+        #btnEditScheduleEdit = Button(editSourceWindow, text="Change Schedule", state=DISABLED)
+        self.readStateEdit()
         lblName.grid(column=0, row=0, padx=50, pady=10)
         txtName.grid(column=1, row=0, padx=10, pady=10)
         lblSource.grid(column=0, row=1, padx=50, pady=10)
@@ -256,30 +258,41 @@ class MainApplication(Tk):
         lblSchedule.grid(column=0, row=3, padx=50, pady=10)
         cmbSchedule.grid(column=1, row=3, padx=10, pady=10)
         cmbSchedule.bind('<<ComboboxSelected>>', self.switchStateEdit)
-        btnEditScheduleEdit.grid(column=1, row=4, padx=50, pady=10)
+        #btnEditScheduleEdit.grid(column=1, row=4, padx=50, pady=10)
 
-        btnCancel.grid(column=0, row=5)
-        btnSubmit.grid(column=1, row=5)
+        lblWeeks.grid(column=0, row=5, padx=20, pady=10)
+        cmbChangeSchedule.grid(column=1, row=5, padx=0, pady=10)
+        lblTime.grid(column=0, row=6, padx=20, pady=20)
+        
+        print(spinvar.get())
+        cmbTime.grid(column=1, row=6, padx=0, pady=20)
+        
+        btnCancel.grid(column=0, row=7, padx=30, pady=10)
+        btnSubmit.grid(column=1, row=7, padx=30, pady=10)
         
     def readStateEdit(event):
         global cmbSchedule
-        global btnEditScheduleEdit
+        global cmbChangeSchedule
+        global cmbTime
         print("event")
         print(event)
         if cmbSchedule.get() == "Never":
-           btnEditScheduleEdit["state"] = "disabled"
+           cmbChangeSchedule["state"] = "disabled"
+           cmbTime["state"] = "disabled"
         else:
-            btnEditScheduleEdit["state"] = "normal"
+            cmbChangeSchedule["state"] = "normal"
+            cmbTime["state"] = "normal"
             
-    def switchStateEdit(event):
+    def switchStateEdit(self, event):
         global cmbSchedule
-        global btnEditScheduleEdit
+        global cmbChangeSchedule
+        global cmbTime
         if cmbSchedule.get() == "Never":
-            btnEditScheduleEdit["state"] = "disabled"
+            cmbChangeSchedule["state"] = "disabled"
+            cmbTime["state"] = "disabled"
         else:
-            btnEditScheduleEdit["state"] = "normal"
-
-        print("switchStateEdit was run")
+            cmbChangeSchedule["state"] = "normal"
+            cmbTime["state"] = "normal"
     # Edit Source Logic
     def editSource(self, id, name, source, destination, schedule, window):
         print(name + source + destination)
