@@ -102,8 +102,12 @@ class MainApplication(Tk):
         # sets the geometry of toplevel
         addSourceWindow.geometry("400x300")
         addSourceWindow.resizable(False, False)
-        global btnEditSchedule
+
         global cmbSelected
+        global cmbSchedule
+        global cmbChangeSchedule
+        global cmbTime
+        
         lblName = Label(addSourceWindow, text="Name:")
         txtName = Entry(addSourceWindow)
         lblSource = Label(addSourceWindow, text="Source:")
@@ -117,6 +121,16 @@ class MainApplication(Tk):
         cmbSelected.trace('w', self.switchStateAdd)
         cmbSchedule['values'] = ("Never", "Weekly", "Every Two Weeks")
         
+        lblWeeks = Label(addSourceWindow, text="Day:")
+        lblTime = Label(addSourceWindow, text="Time:")
+        cmbChangeSchedule = Combobox(addSourceWindow, state=DISABLED)
+        cmbChangeSchedule['values'] = ("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
+        cmbChangeSchedule.current(0)
+        
+        cmbTime = Combobox(addSourceWindow, state=DISABLED)
+        cmbTime['values'] = ('00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00')
+        cmbTime.current(0)
+        
         btnCancel = Button(addSourceWindow, text="Cancel", command=addSourceWindow.destroy)
         btnSubmit = Button(addSourceWindow, text="Okay", command=lambda: self.addSource(txtName.get(), txtSource.get(), txtDestination.get(), cmbSchedule.get(), addSourceWindow))
         lblName.grid(column=0, row=0, padx=50, pady=10)
@@ -129,16 +143,26 @@ class MainApplication(Tk):
         cmbSchedule.grid(column=1, row=3, padx=10, pady=10)
         #cmbSchedule.bind('<<ComboboxSelected>>', switchStateAdd)
         #cmbSchedule.current(0)
-        btnCancel.grid(column=0, row=5)
-        btnSubmit.grid(column=1, row=5)
+        lblWeeks.grid(column=0, row=5, padx=20, pady=10)
+        cmbChangeSchedule.grid(column=1, row=5, padx=0, pady=10)
+        lblTime.grid(column=0, row=6, padx=20, pady=20)
+        
+        cmbTime.grid(column=1, row=6, padx=0, pady=20)
+        btnCancel.grid(column=0, row=7)
+        btnSubmit.grid(column=1, row=7)
 
         return addSourceWindow
 
     def switchStateAdd(*arg):
+        global cmbSchedule
+        global cmbChangeSchedule
+        global cmbTime
         if cmbSelected.get() == "Never":
-            btnEditSchedule["state"] = "disabled"
+            cmbChangeSchedule["state"] = "disabled"
+            cmbTime["state"] = "disabled"
         else:
-            btnEditSchedule["state"] = "normal"
+            cmbChangeSchedule["state"] = "normal"
+            cmbTime["state"] = "normal"
 
         print("switchStateAdd was run")
 
