@@ -54,11 +54,11 @@ class MainApplication(Tk):
         scrlTree = Scrollbar(frame, orient=VERTICAL, command=tree.yview)
         tree.configure(yscroll=scrlTree.set)
         # Main Functionality Buttons
-        btnAdd = Button(self, text="Add Source...", command=self.openAddSourceWindow)
-        btnEdit = Button(self, text="Edit Source...", command=self.openEditSourceWindow)
-        btnDelete = Button(self, text="Remove Source...", command=self.removeSource)
-        btnBackup = Button(self, text="Backup Selected...", command=self.backupSelected)
-        btnBackupNow = Button(self, text="Backup All", command=self.backupAll)
+        btnAdd = Button(self, text="Add Source...", command=self.add_source_ui)
+        btnEdit = Button(self, text="Edit Source...", command=self.edit_source_ui)
+        btnDelete = Button(self, text="Remove Source...", command=self.remove_source)
+        btnBackup = Button(self, text="Backup Selected...", command=self.backup_selected)
+        btnBackupNow = Button(self, text="Backup All", command=self.backup_all)
         # Push Title to Grid
         lblTitle.grid(column=0, row=0, columnspan=5, padx=0, pady=30)
         # Push the Frame, Tree View, and Scrollbar to Grid
@@ -88,12 +88,12 @@ class MainApplication(Tk):
             location_count +=1
             print(location_count)
 
-    def clearTree(event):
+    def clear_tree(event):
         #clear the tree
         for item in tree.get_children():
                 tree.delete(item)
 
-    def openAddSourceWindow(self):
+    def add_source_ui(self):
         # Toplevel object which will
         # be treated as a new window
         addSourceWindow = Toplevel(self)
@@ -119,7 +119,7 @@ class MainApplication(Tk):
         cmbSelected = StringVar()
         cmbSchedule = Combobox(addSourceWindow, textvariable= cmbSelected)
 
-        cmbSelected.trace('w', self.switchStateAdd)
+        cmbSelected.trace('w', self.disable_check_add)
         cmbSchedule['values'] = ("Never", "Weekly", "Every Two Weeks")
         
         lblWeeks = Label(addSourceWindow, text="Day:")
@@ -133,7 +133,7 @@ class MainApplication(Tk):
         cmbTime.current(0)
         
         btnCancel = Button(addSourceWindow, text="Cancel", command=addSourceWindow.destroy)
-        btnSubmit = Button(addSourceWindow, text="Okay", command=lambda: self.addSource(txtName.get(), txtSource.get(), txtDestination.get(), cmbSchedule.get(), addSourceWindow))
+        btnSubmit = Button(addSourceWindow, text="Okay", command=lambda: self.add_source(txtName.get(), txtSource.get(), txtDestination.get(), cmbSchedule.get(), addSourceWindow))
         lblName.grid(column=0, row=0, padx=50, pady=10)
         txtName.grid(column=1, row=0, padx=10, pady=10)
         lblSource.grid(column=0, row=1, padx=50, pady=10)
@@ -142,7 +142,7 @@ class MainApplication(Tk):
         txtDestination.grid(column=1, row=2, padx=10, pady=10)
         lblSchedule.grid(column=0, row=3, padx=50, pady=10)
         cmbSchedule.grid(column=1, row=3, padx=10, pady=10)
-        #cmbSchedule.bind('<<ComboboxSelected>>', switchStateAdd)
+        #cmbSchedule.bind('<<ComboboxSelected>>', disable_check_add)
         #cmbSchedule.current(0)
         lblWeeks.grid(column=0, row=5, padx=20, pady=10)
         cmbChangeSchedule.grid(column=1, row=5, padx=0, pady=10)
@@ -154,7 +154,7 @@ class MainApplication(Tk):
 
         return addSourceWindow
 
-    def switchStateAdd(*arg):
+    def disable_check_add(*arg):
         global cmbSchedule
         global cmbChangeSchedule
         global cmbTime
@@ -165,9 +165,9 @@ class MainApplication(Tk):
             cmbChangeSchedule["state"] = "normal"
             cmbTime["state"] = "normal"
 
-        print("switchStateAdd was run")
+        print("disable_check_add was run")
 
-    def addSource(self, name, source, destination, schedule, window):
+    def add_source(self, name, source, destination, schedule, window):
         global location_count
         print(location_count)
         print(name + source + destination)
@@ -201,14 +201,14 @@ class MainApplication(Tk):
                 json.dump(location_data, file, indent=4)
 
             #clear treeview
-            self.clearTree()
+            self.clear_tree()
             # Reset location count
             location_count = 0
             # Populate the Tree View
             self.populate_tree()
        
     ####### Edit Source Window #######
-    def openEditSourceWindow(self):
+    def edit_source_ui(self):
         editSourceWindow = Toplevel(self)
         editSourceWindow.title("Edit Source...")
         editSourceWindow.geometry("400x400")
@@ -270,10 +270,10 @@ class MainApplication(Tk):
         cmbTime.current(0)
         
         btnCancel = Button(editSourceWindow, text="Cancel", command=editSourceWindow.destroy)
-        btnSubmit = Button(editSourceWindow, text="Save", command=lambda: self.editSource(id, txtName.get(), txtSource.get(), txtDestination.get(), cmbSchedule.get(), editSourceWindow))
+        btnSubmit = Button(editSourceWindow, text="Save", command=lambda: self.edit_source(id, txtName.get(), txtSource.get(), txtDestination.get(), cmbSchedule.get(), editSourceWindow))
 
         #btnEditScheduleEdit = Button(editSourceWindow, text="Change Schedule", state=DISABLED)
-        self.readStateEdit()
+        self.disable_check_edit()
         lblName.grid(column=0, row=0, padx=50, pady=10)
         txtName.grid(column=1, row=0, padx=10, pady=10)
         lblSource.grid(column=0, row=1, padx=50, pady=10)
@@ -282,7 +282,7 @@ class MainApplication(Tk):
         txtDestination.grid(column=1, row=2, padx=10, pady=10)
         lblSchedule.grid(column=0, row=3, padx=50, pady=10)
         cmbSchedule.grid(column=1, row=3, padx=10, pady=10)
-        cmbSchedule.bind('<<ComboboxSelected>>', self.switchStateEdit)
+        cmbSchedule.bind('<<ComboboxSelected>>', self.disable_switch_edit)
         #btnEditScheduleEdit.grid(column=1, row=4, padx=50, pady=10)
 
         lblWeeks.grid(column=0, row=5, padx=20, pady=10)
@@ -295,7 +295,7 @@ class MainApplication(Tk):
         btnCancel.grid(column=0, row=7, padx=30, pady=10)
         btnSubmit.grid(column=1, row=7, padx=30, pady=10)
         
-    def readStateEdit(event):
+    def disable_check_edit(event):
         global cmbSchedule
         global cmbChangeSchedule
         global cmbTime
@@ -308,7 +308,7 @@ class MainApplication(Tk):
             cmbChangeSchedule["state"] = "normal"
             cmbTime["state"] = "normal"
             
-    def switchStateEdit(self, event):
+    def disable_switch_edit(self, event):
         global cmbSchedule
         global cmbChangeSchedule
         global cmbTime
@@ -319,7 +319,7 @@ class MainApplication(Tk):
             cmbChangeSchedule["state"] = "normal"
             cmbTime["state"] = "normal"
     # Edit Source Logic
-    def editSource(self, id, name, source, destination, schedule, window):
+    def edit_source(self, id, name, source, destination, schedule, window):
         print(name + source + destination)
 
         if not name or not source or not destination:
@@ -361,11 +361,11 @@ class MainApplication(Tk):
                 file.write(json.dumps(lines, indent=2))
 
             #clear the treeview
-            self.clearTree()
+            self.clear_tree()
             #populate the treeview
             self.populate_tree()
     # Remove Source Logic
-    def removeSource(self):
+    def remove_source(self):
         global location_count
         confirm = msg.askokcancel("Remove Source...", "Are you sure you want to remove this backup location?")
 
@@ -396,7 +396,7 @@ class MainApplication(Tk):
                     file.write(json.dumps(lines, indent=2))
 
             #clear treeview
-            self.clearTree(self)
+            self.clear_tree(self)
 
             location_count = 0
 
@@ -404,7 +404,7 @@ class MainApplication(Tk):
         else:
             reply = "cancel"
     # Individual Backup Logic
-    def backupSelected(event):
+    def backup_selected(event):
         #Do this 
         try:
             selected_item = tree.focus()
@@ -421,7 +421,7 @@ class MainApplication(Tk):
         print("backup complete")
 
     # Backup All Logic
-    def backupAll(event):
+    def backup_all(event):
         msg.showwarning("Remove Source...", "Are you sure you want to remove this backup location?")
 
 if __name__ == "__main__":
