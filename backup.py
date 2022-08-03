@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter.ttk import *
 import tkinter.messagebox as msg
 import json
+import shutil
 
 # Global vars
 tree = None
@@ -56,8 +57,8 @@ class MainApplication(Tk):
         btnAdd = Button(self, text="Add Source...", command=self.openAddSourceWindow)
         btnEdit = Button(self, text="Edit Source...", command=self.openEditSourceWindow)
         btnDelete = Button(self, text="Remove Source...", command=self.removeSource)
-        btnBackup = Button(self, text="Backup Selected...")
-        btnBackupNow = Button(self, text="Backup All")
+        btnBackup = Button(self, text="Backup Selected...", command=self.backupSelected)
+        btnBackupNow = Button(self, text="Backup All", command=self.backupAll)
         # Push Title to Grid
         lblTitle.grid(column=0, row=0, columnspan=5, padx=0, pady=30)
         # Push the Frame, Tree View, and Scrollbar to Grid
@@ -403,11 +404,24 @@ class MainApplication(Tk):
         else:
             reply = "cancel"
     # Individual Backup Logic
-    def backup():
-        #Do this
-        msg.showwarning("Remove Source...", "Are you sure you want to remove this backup location?")
+    def backupSelected(event):
+        #Do this 
+        try:
+            selected_item = tree.focus()
+            temp = tree.item(selected_item)
+            msg.askokcancel("Backup Selected...", "Are you sure you want to backup this item?")
+            source = temp['values'][2]
+            print("source: " + source)
+            destination = temp['values'][3]
+            print("destination: " + destination)
+            backup = shutil.copytree(source, destination)
+        except:
+            msg.showwarning("Warning", "No item is selected!")
+
+        print("backup complete")
+
     # Backup All Logic
-    def backupAll():
+    def backupAll(event):
         msg.showwarning("Remove Source...", "Are you sure you want to remove this backup location?")
 
 if __name__ == "__main__":
