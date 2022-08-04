@@ -20,7 +20,7 @@ class MainApplication(Tk):
         super().__init__()
 
         self.title("backup.py")
-        self.geometry("750x500")
+        self.geometry("1200x700")
         self.resizable(False, False)
         #self.iconphoto(False, PhotoImage(file="assets/title_icon.png"))
 
@@ -101,7 +101,7 @@ class MainApplication(Tk):
         # Toplevel widget
         addSourceWindow.title("Add Source...")
         # sets the geometry of toplevel
-        addSourceWindow.geometry("400x300")
+        addSourceWindow.geometry("800x600")
         addSourceWindow.resizable(False, False)
 
         global cmbSelected
