@@ -104,7 +104,7 @@ class MainApplication(Tk):
         # Toplevel widget
         addSourceWindow.title("Add Source...")
         # sets the geometry of toplevel
-        addSourceWindow.geometry("600x600")
+        addSourceWindow.geometry("600x450")
         addSourceWindow.resizable(False, False)
 
         global cmbSelected
@@ -214,7 +214,7 @@ class MainApplication(Tk):
     def edit_source_ui(self):
         editSourceWindow = Toplevel(self)
         editSourceWindow.title("Edit Source...")
-        editSourceWindow.geometry("400x400")
+        editSourceWindow.geometry("600x450")
         editSourceWindow.resizable(False, False)
         global btnEditScheduleEdit
         global cmbSelectedEdit
