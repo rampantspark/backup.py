@@ -20,10 +20,10 @@ class MainApplication(Tk):
         super().__init__()
 
         self.title("backup.py")
-        self.geometry("1200x700")
+        self.geometry("1435x800")
         self.resizable(False, False)
         #self.iconphoto(False, PhotoImage(file="assets/title_icon.png"))
-
+        s=Style()
         global tree
         # MAIN WINDOW GUI
         columns = ('id', 'name', 'source', 'destination', 'schedule', 'last_backup', 'next_backup', 'status')
@@ -31,26 +31,28 @@ class MainApplication(Tk):
         lblTitle = Label(self, text="backup.py", font=("Arial", 25))
         # Define Tree View Frame
         frame = Frame(self)
-        frame.place(height=485, width=1200)
+        #frame.place(height=300, width=900)
+        s.configure('Treeview', rowheight=40)
+        s.configure('TreeView', rowwidth=40)
         # Define Tree View
-        tree = Treeview(frame, columns=columns, show="headings")
+        tree = Treeview(frame, columns=columns, show="headings",selectmode="extended", height=10)
 
         tree.heading('id', text="ID")
-        tree.column('id', minwidth=30, width=30, stretch=False)
+        tree.column('id', minwidth=50, width=50, stretch=False)
         tree.heading('name', text="Name")
         tree.column('name', minwidth=90, width=90, stretch=False)
         tree.heading('source', text="Source")
-        tree.column('source', minwidth=120, width=120, stretch=False)
+        tree.column('source', minwidth=120, width=200, stretch=False)
         tree.heading('destination', text="Destination")
-        tree.column('destination', minwidth=120, width=120, stretch=False)
+        tree.column('destination', minwidth=120, width=200, stretch=False)
         tree.heading('schedule', text="Schedule")
-        tree.column('schedule', minwidth=90, width=90, stretch=False)
+        tree.column('schedule', minwidth=90, width=200, stretch=False)
         tree.heading('last_backup', text="Last Backup")
-        tree.column('last_backup', minwidth=90, width=90, stretch=False)
+        tree.column('last_backup', minwidth=90, width=200, stretch=False)
         tree.heading('next_backup', text="Next Backup")
-        tree.column('next_backup', minwidth=90, width=90, stretch=False)
+        tree.column('next_backup', minwidth=150, width=200, stretch=False)
         tree.heading('status', text="Status")
-        tree.column('status', minwidth=50, width=50, stretch=False)
+        tree.column('status', minwidth=100, width=100, stretch=False)
         # Define Tree View Scrollbar
         scrlTree = Scrollbar(frame, orient=VERTICAL, command=tree.yview)
         tree.configure(yscroll=scrlTree.set)
@@ -63,8 +65,8 @@ class MainApplication(Tk):
         # Push Title to Grid
         lblTitle.grid(column=0, row=0, columnspan=5, padx=0, pady=30)
         # Push the Frame, Tree View, and Scrollbar to Grid
-        frame.grid(column=0, row=1, columnspan=5, padx=5, pady=20)
-        tree.grid(column=0, row=1, columnspan=5, padx=0, pady=0, sticky='nsew')
+        frame.grid(column=0, row=1, columnspan=5, padx=0, pady=10)
+        tree.grid(column=0, row=1, columnspan=5, padx=0, pady=10)
         scrlTree.grid(column=6, row=1, padx=0, sticky="ns")
         # Populate the Tree with JSON location data
         self.populate_tree()
