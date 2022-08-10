@@ -31,6 +31,7 @@ class MainApplication(Tk):
         lblTitle = Label(self, text="backup.py", font=("Arial", 25))
         # Define Tree View Frame
         frame = Frame(self)
+        frame.place(height=485, width=1200)
         # Define Tree View
         tree = Treeview(frame, columns=columns, show="headings")
 
@@ -62,17 +63,17 @@ class MainApplication(Tk):
         # Push Title to Grid
         lblTitle.grid(column=0, row=0, columnspan=5, padx=0, pady=30)
         # Push the Frame, Tree View, and Scrollbar to Grid
-        frame.grid(column=0, row=1, columnspan=5, padx=30, pady=20)
+        frame.grid(column=0, row=1, columnspan=5, padx=5, pady=20)
         tree.grid(column=0, row=1, columnspan=5, padx=0, pady=0, sticky='nsew')
         scrlTree.grid(column=6, row=1, padx=0, sticky="ns")
         # Populate the Tree with JSON location data
         self.populate_tree()
         # Push Main Functionality Buttons to Grid
-        btnAdd.grid(column=0, row=4, padx=5, pady=20)
-        btnEdit.grid(column=1, row=4, padx=5, pady=20)
-        btnDelete.grid(column=2, row=4, padx=5, pady=20)
-        btnBackup.grid(column=3, row=4, padx=5, pady=20)
-        btnBackupNow.grid(column=4, row=4, padx=5, pady=10)
+        btnAdd.grid(column=0, row=4, padx=70, pady=20)
+        btnEdit.grid(column=1, row=4, padx=50, pady=20)
+        btnDelete.grid(column=2, row=4, padx=50, pady=20)
+        btnBackup.grid(column=3, row=4, padx=50, pady=20)
+        btnBackupNow.grid(column=4, row=4, padx=50, pady=10)
 
     def populate_tree(event):
         global tree
@@ -101,7 +102,7 @@ class MainApplication(Tk):
         # Toplevel widget
         addSourceWindow.title("Add Source...")
         # sets the geometry of toplevel
-        addSourceWindow.geometry("800x600")
+        addSourceWindow.geometry("600x600")
         addSourceWindow.resizable(False, False)
 
         global cmbSelected
@@ -144,9 +145,9 @@ class MainApplication(Tk):
         cmbSchedule.grid(column=1, row=3, padx=10, pady=10)
         #cmbSchedule.bind('<<ComboboxSelected>>', disable_check_add)
         #cmbSchedule.current(0)
-        lblWeeks.grid(column=0, row=5, padx=20, pady=10)
+        lblWeeks.grid(column=0, row=5, padx=50, pady=10)
         cmbChangeSchedule.grid(column=1, row=5, padx=0, pady=10)
-        lblTime.grid(column=0, row=6, padx=20, pady=20)
+        lblTime.grid(column=0, row=6, padx=50, pady=20)
         
         cmbTime.grid(column=1, row=6, padx=0, pady=20)
         btnCancel.grid(column=0, row=7)
